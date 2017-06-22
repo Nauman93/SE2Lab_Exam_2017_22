@@ -108,6 +108,32 @@ paths:
         400:
           description: disk not sent
           
+  /remasterDisk:
+    post:
+      summary: remaster a disk
+      consumes:
+        - application/x-www-form-urlencoded
+      description: the item if it is restocket, null if the item does not exist or the new capacity is highier than 100
+      parameters:
+        - name: ID
+          in: formData
+          description: ID of the disk
+          required: true
+          type: string
+      responses:
+        200:
+          description: object of the sold disk
+          schema: 
+              $ref: "#/definitions/item"
+        400:
+          description: ID of error
+          schema: 
+            properties:
+              error:
+                type: integer
+        404:
+          description: no disk found
+
 definitions:
   item:
     properties:

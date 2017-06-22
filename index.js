@@ -97,7 +97,7 @@ app.post('/searchDisk', function(request, response)
 
 /**
  * @brief remaster an item, update the date
- * @return the item restoked
+ * @return the item remastered
  */
 app.post('/remasterDisk', function(request, response) 
 {	
@@ -161,6 +161,132 @@ app.post('/remasterDisk', function(request, response)
 		response.writeHead(406, headers);
 		response.end(JSON.stringify("1"));
 	}   
+
+});
+
+//MY CODE
+
+/**
+ * @brief sell a disk
+ * @return the disk sold
+ */
+app.post('/sellDisk', function(request, response) 
+{	
+	var headers = {};
+	headers["Access-Control-Allow-Origin"] = "*";
+	headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, OPTIONS";
+	headers["Access-Control-Allow-Credentials"] = false;
+	headers["Access-Control-Max-Age"] = '86400'; // 24 hours
+	headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept";
+	headers["Content-Type"] = "application/json";
+
+	var diskID;
+	var diskQuantity;
+	var diskPrice;
+
+	//check body and parameters
+	if ( typeof request.body !== 'undefined' && request.body)
+	{
+		if ( typeof request.body.ID !== 'undefined' && request.body.ID &&
+			 typeof request.body.quantity !== 'undefined' && request.body.quantity &&
+			 typeof request.body.price !== 'undefined' && request.body.price
+		   )
+            {
+			 diskID = parseFloat(request.body.ID);
+			 diskQuantity = parseFloat(request.body.quantity);
+			 diskPrice = parseFloat(request.body.price);
+            }
+		else 
+			diskID = "undefined";
+	}
+	else
+	{
+		diskID = "body undefined";
+	}
+    
+    if (diskID!="undefined" && diskID!="body undefined")
+	{
+		//aceptable input
+		//create the object to be used as input for the db manager function
+		var disk =  
+            {
+                ID: diskID,
+                quantity: diskQuantity,
+                price: diskPrice
+            };
+        
+        var result=recordShop.sellDisk(disk)
+		
+		//if insertion works correctly
+		if (result)
+		{
+			response.writeHead(200, headers);
+			response.end(JSON.stringify(result));
+		}
+		else
+		{
+			response.writeHead(404, headers);
+			response.end(JSON.stringify());
+		}
+
+	}
+    else    
+	{
+		//unaceptable input
+		response.writeHead(406, headers);
+		response.end(JSON.stringify("1"));
+	}   
+
+});
+
+/**
+ * @brief search for a disk genre
+ * @return a disk tat matches the genre specifed, if it does not exists it returns 400
+ */
+app.post('/searchSimilarDisk', function(request, response) 
+{
+	var headers = {};
+	headers["Access-Control-Allow-Origin"] = "*";
+	headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, OPTIONS";
+	headers["Access-Control-Allow-Credentials"] = false;
+	headers["Access-Control-Max-Age"] = '86400'; // 24 hours
+	headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept";
+	headers["Content-Type"] = "application/json";
+
+	var diskGenre;
+	
+	//check body and parameters
+	if ( typeof request.body !== 'undefined' && request.body)
+	{
+        
+        //diskGenre
+		if ( typeof request.body.ID !== 'undefined' && request.body.ID)
+			 diskGenre = parseFloat(request.body.genre);
+		else 
+			diskGenre = null;
+        
+		//search for disk
+		var disk = recordShop.searchSimilarDisk(diskGenre);
+		//if exists
+		if (diskGenre != null)
+		{
+			response.writeHead(200, headers);
+			response.end(JSON.stringify(disk));
+		}
+		else
+		{
+			response.writeHead(400, headers);
+			response.end(JSON.stringify());
+		}
+	
+	}
+	else
+	{
+		//unaceptable input
+		response.writeHead(406, headers);
+		response.end(JSON.stringify("1"));
+	}
+    
 
 });
 

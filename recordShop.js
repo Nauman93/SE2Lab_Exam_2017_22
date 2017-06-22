@@ -89,7 +89,7 @@ var searchPos = function searchPos(diskID)
 /**
  * @brief This function increase the quantity of an element, given its ID. The maximum capacity is 100. 
  * @param itemID
- * @return the item if it is restocket, null if the item does not exist or the new capacity is highier than 100
+ * @return the item if it is remastered, null if the item does not exist or the new capacity is highier than 100
  */
 var remaster = function remaster(item)
 {
@@ -106,7 +106,60 @@ var remaster = function remaster(item)
         return null;
 }
 
+//MY CODE
+/**
+ * @brief This function sell the disk, decresing the quantity by 1, given its ID. Apply a discount up to 50% based on days passed
+ * @param itemID
+ * @return the item if it is sols, null if the item does not exist 
+ */
+var sellDisk = function sellDisk(item)
+{
+    //search for the element
+    var position = searchPos(item.ID);
+    var giorni;
+    var discount;
+    if (position!=null)
+        {
+            disks[position].quantity=disks[position].quantity-1;
+            var x = new Date();
+            var y = disk[position].date;
+            giorni = (x-y)/(24*3600*1000);
+            discount = (0.01*giorni);
+            if (discount<=50){
+                disk[position].price=disk[position].price-(disk[position].price*discount/100);
+            }else{
+                discount=50;
+                disk[position].price=disk[position].price-(disk[position].price*discount/100);
+            }
+            return disks[position];
+        }
+    else
+        return null;
+}
+
+/** 
+ * @brief it searches disks with same genre
+ * @param diskGenre
+ * @return the elements searched, null otherwise
+ */
+var searchSimilarDisk = function searchSimilarDisk(diskGenre)
+{
+    //search for the elements
+    for (i=0; i < disks.length; i++)
+    {
+        if (disks[i].genre == diskGenre)
+        {
+            return disk[i];
+        }
+    }
+    
+    //if this point is reached the element is not found
+    return null;
+}
+
 //export functions
 exports.getDisks = getDisks; 
 exports.searchDisk = searchDisk; 
 exports.remaster = remaster; 
+exports.sellDisk = sellDisk;
+exports.searchSimilarDisk = searchSimilarDisk;
