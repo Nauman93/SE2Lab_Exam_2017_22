@@ -188,3 +188,52 @@ describe("Test /searchSimilarDisk", function() {
 	});	
 	
 });
+
+//MY CODE
+//Test for /seachDisk
+describe("Test /searchDisk", function() {	
+	//legal request
+	var data = {
+			ID: 1
+    };
+    
+    var dateCheck= new Date(2000, 0, 1, 0, 0, 0, 0).toISOString();
+    
+	it("to return status code 200", function(done) {
+	  client.post(base_url + "searchDisk/", data, function(err, res, body) {
+		expect(body).toEqual(
+        {
+                ID: 1,
+                price: 11,
+                quantity: 20,
+                genre: "classic",
+                date: dateCheck
+        }
+		);
+		done();
+	  });
+	});
+	
+
+	//item non existing ID
+	var data1 = {
+			ID: 10
+    };
+	it("to return status code 404", function(done) {
+	  client.post(base_url + "searchDisk/", data1, function(err, res, body) {
+		expect(res.statusCode).toBe(404);
+		done();
+	  });
+	});
+	
+	//wrong parameter
+	var data2 = {code: "1" };
+	it("to return status code 406", function(done) {
+	  client.post(base_url + "seearchDisk/", data2, function(err, res, body) {
+		expect(res.statusCode).toBe(406);
+		expect(body).toBe(1);
+		done();
+	  });
+	});	
+	
+});
